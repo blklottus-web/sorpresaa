@@ -17,9 +17,18 @@ html,body{width:100%;height:100%;overflow:hidden;background:linear-gradient(135d
 @keyframes fadeIn{from{opacity:0;transform:scale(1.012);}to{opacity:1;transform:scale(1);}}
 .fade-in{animation:fadeIn 0.5s ease forwards;}
 
+/* ── PLAY OVERLAY ── */
+#play-overlay{position:fixed;top:0;left:0;width:100%;height:100%;z-index:100;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#ffe0f0,#e0f0ff,#fffde0);transition:opacity 0.6s ease;}
+#play-overlay.hide{opacity:0;pointer-events:none;}
+#play-btn{width:80px;height:80px;border-radius:50%;background:#ff69b4;border:none;cursor:pointer;box-shadow:0 0 0 8px #ffb6c180, 4px 4px 0 #cc3377;display:flex;align-items:center;justify-content:center;transition:transform .15s,box-shadow .15s;animation:pulse 1.8s ease-in-out infinite;}
+#play-btn:hover{transform:scale(1.08);box-shadow:0 0 0 12px #ffb6c180, 4px 4px 0 #cc3377;}
+#play-btn svg{width:32px;height:32px;fill:white;margin-left:4px;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 8px #ffb6c180,4px 4px 0 #cc3377;}50%{box-shadow:0 0 0 16px #ffb6c130,4px 4px 0 #cc3377;}}
+
 /* ── CHEAP CARD ── */
 #s-cheap{background:linear-gradient(135deg,#ffe0f0,#e0f0ff,#fffde0);}
-#cheap-box{position:relative;z-index:2;text-align:center;padding:40px 48px;background:white;border:3px dashed #ff69b4;border-radius:12px;box-shadow:4px 4px 0 #ffb6c1,8px 8px 0 #add8e6;max-width:480px;font-family:'Comic Sans MS','Comic Sans',cursive;}
+#cheap-box{position:relative;z-index:2;text-align:center;padding:40px 48px;background:white;border:3px dashed #ff69b4;border-radius:12px;box-shadow:4px 4px 0 #ffb6c1,8px 8px 0 #add8e6;max-width:480px;font-family:'Comic Sans MS','Comic Sans',cursive;opacity:0;transition:opacity 0.5s ease 0.3s;}
+#cheap-box.visible{opacity:1;}
 #cheap-title{font-family:'Modak',cursive;font-size:2.8rem;color:#ff4499;text-shadow:2px 2px 0 #ffaacc;margin-bottom:8px;}
 .cheap-emoji{font-size:1.8rem;margin:8px 0;display:block;}
 #cheap-sub{font-size:0.95rem;color:#6688aa;margin:0;}
@@ -36,6 +45,13 @@ html,body{width:100%;height:100%;overflow:hidden;background:linear-gradient(135d
 <body>
 
 <canvas id="confetti-canvas"></canvas>
+
+<!-- PLAY OVERLAY -->
+<div id="play-overlay">
+  <button id="play-btn" onclick="startExperience()">
+    <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+  </button>
+</div>
 
 <!-- CHEAP CARD -->
 <div id="s-cheap" class="screen active">
@@ -81,7 +97,15 @@ function goToCard() {
 const aud = new Audio('audio/baile.mp3');
 aud.loop = true;
 aud.volume = 0.7;
-setTimeout(() => { aud.play().catch(() => {}); }, 1000);
+
+function startExperience() {
+  aud.play().catch(() => {});
+  startConfetti();
+  const overlay = document.getElementById('play-overlay');
+  overlay.classList.add('hide');
+  overlay.addEventListener('transitionend', () => overlay.remove(), {once: true});
+  document.getElementById('cheap-box').classList.add('visible');
+}
 
 /* ── CONFETTI ── */
 let confAlive = false;
@@ -117,8 +141,6 @@ function startConfetti() {
   })();
 }
 function stopConfetti() { confAlive = false; }
-
-startConfetti();
 </script>
 </body>
 </html>
